@@ -5,6 +5,7 @@ import time
 import socket
 import fcntl
 import struct
+import os
 
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,9 +20,9 @@ def get_ip_address(ifname):
 @click.option('--name', help='nome of host')
 def update(ip, name):
     if ip.startswith('eth'):
-        ip = get_ip_address(ip)
-
-    client = dns.Client.from_service_account_json('auth.json')
+        ip = get_ip_address(ip.encode())
+    fn = os.path.join(os.path.dirname(__file__),'auth.json')
+    client = dns.Client.from_service_account_json(fn)
     zones = client.list_zones()
     for zone in zones:
         for record in zone.list_resource_record_sets():
